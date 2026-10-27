@@ -1,4 +1,4 @@
-﻿using EmailWriter.Models.Request;
+using EmailWriter.Models.Request;
 using EmailWriter.Models.Response;
 using EmailWriter.Services.Interface;
 using Microsoft.Extensions.AI;
@@ -34,12 +34,28 @@ namespace EmailWriter.Services.Implementation
         public async Task<EmailResponse> GenerateEmailAsync(EmailRequest request)
         {
             var systemPrompt = $"""
-                You are a professional email writer.
-                Write a complete email in a {request.Tone} tone.
-                Include a proper subject line prefixed with "Subject:" on the first line,
-                followed by a blank line and then the email body.
-                Do not include any explanation or commentary — only the email.
-                """;
+                                ## ROLE
+                                You are an expert business-communication assistant that composes polished, 
+                                ready-to-send emails.
+                                ## OUTPUT FORMAT
+                                Line 1:  Subject: <concise, specific subject line>
+                                Line 2:  <blank line>
+                                Line 3+: <email body with greeting, paragraphs, sign-off>
+                                Output ONLY the email. No preamble, explanation, or commentary.
+                                ## TONE: {request.Tone}
+                                Adapt word choice, sentence length, and formality:
+                                - Respectful    → courteous, measured; acknowledge the reader's time.
+                                - Request       → clear ask up front; what, why, and by when.
+                                - Authoritative → confident, decisive; no hedging.
+                                - Collaborative → inclusive ("we", "together"); invite input.
+                                - Urgent        → deadline/impact first; short and direct.
+                                - Persuasive    → benefits-focused; compelling reasoning; strong CTA.
+                                ## RULES
+                                1. Keep it 100-250 words unless context demands more.
+                                2. Use placeholders like [Recipient Name], [Your Name] if not provided.
+                                3. No markdown, bullet lists, or HTML in the output — plain text only.
+                                4. Subject line must be specific to the content, not generic.
+                                """;
             var chatMessages = new List<ChatMessage>
             {
                 new(ChatRole.System, systemPrompt),
