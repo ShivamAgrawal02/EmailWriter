@@ -23,12 +23,12 @@ namespace EmailWriter.Services.Implementation
             Endpoint = _configuration["Gemini:Endpoint"];
             ModelId = _configuration["Gemini:ModelId"];
             _chatClient = new OpenAIClient(
-                           new System.ClientModel.ApiKeyCredential(ApiKey),
+                           new System.ClientModel.ApiKeyCredential(ApiKey),//wrapping key - so that sdk can use it 
                            new OpenAIClientOptions
                            {
                                Endpoint = new Uri(Endpoint)
-                           })
-                       .GetChatClient(ModelId)    
+                           })// providing endpoint - in our case its gemini,it could be open router or some else provider
+                       .GetChatClient(ModelId)    // defines which model to use for chat 
                        .AsIChatClient();
         }
         public async Task<EmailResponse> GenerateEmailAsync(EmailRequest request)
