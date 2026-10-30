@@ -10,14 +10,17 @@ namespace EmailWriter.Services.Implementation
     public class EmailService : IEmailService
     {
         private readonly IChatClient _chatClient;
+        private readonly ILogger<EmailService> _logger;
 
 
-        public EmailService(IChatClient chatClient)
+        public EmailService(IChatClient chatClient, ILogger<EmailService> logger)
         {
             _chatClient = chatClient;
+            _logger = logger;
         }
         public async Task<EmailResponse> GenerateEmailAsync(EmailRequest request)
         {
+            _logger.LogInformation($"Email Generation Request is being Processed for context {request.Context} with tone {request.Tone}");
             var systemPrompt = $"""
                             ## ROLE
                             You are an expert business-communication assistant that composes polished,
@@ -86,6 +89,7 @@ namespace EmailWriter.Services.Implementation
             };
             var response = await _chatClient.GetResponseAsync(chatMessages);
             return new EmailResponse(response.Text);
+            _logger.LogInformation($"Response Recieved for Email Generation Request is being Processed for context {request.Context} with tone {request.Tone}");
         }
     }
 }
