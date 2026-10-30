@@ -10,26 +10,11 @@ namespace EmailWriter.Services.Implementation
     public class EmailService : IEmailService
     {
         private readonly IChatClient _chatClient;
-        private readonly string ApiKey;
-        private readonly string Endpoint;
-        private readonly string ModelId;
-        private readonly IConfiguration _configuration;
 
 
-        public EmailService(IConfiguration configuration)
+        public EmailService(IChatClient chatClient)
         {
-            _configuration = configuration;
-            ApiKey = _configuration["Gemini:ApiKey"];
-            Endpoint = _configuration["Gemini:Endpoint"];
-            ModelId = _configuration["Gemini:ModelId"];
-            _chatClient = new OpenAIClient(
-                           new System.ClientModel.ApiKeyCredential(ApiKey),//wrapping key - so that sdk can use it 
-                           new OpenAIClientOptions
-                           {
-                               Endpoint = new Uri(Endpoint)
-                           })// providing endpoint - in our case its gemini,it could be open router or some else provider
-                       .GetChatClient(ModelId)    // defines which model to use for chat 
-                       .AsIChatClient();
+            _chatClient = chatClient;
         }
         public async Task<EmailResponse> GenerateEmailAsync(EmailRequest request)
         {
@@ -89,7 +74,7 @@ namespace EmailWriter.Services.Implementation
                             - Do NOT compose emails impersonating government officials, law enforcement,
                               or legal authorities.
                             - If the context is too vague to write a meaningful email (fewer than ~3 words
-                              of substance), respond with exactly:
+                              of substance), respond with exactly:z
                               "The context provided is too vague. Please include more detail about the
                               email's purpose, audience, and key points."
                             """;
