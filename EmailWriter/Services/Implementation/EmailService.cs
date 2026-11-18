@@ -87,9 +87,30 @@ namespace EmailWriter.Services.Implementation
                 new(ChatRole.System, systemPrompt),
                 new(ChatRole.User, request.Context)
             };
-            var response = await _chatClient.GetResponseAsync(chatMessages);
-            return new EmailResponse(response.Text);
-            _logger.LogInformation($"Response Recieved for Email Generation Request is being Processed for context {request.Context} with tone {request.Tone}");
+            var chatOptions = new ChatOptions()
+            {
+                Temperature = 0.3f,
+                TopK = 3,
+            };
+            var maxAttempts = 2;
+            for (int i = 1; i <= maxAttempts; i++)
+            {
+                try
+                {
+                    var response = await _chatClient.GetResponseAsync(chatMessages,chatOptions);
+                    return new EmailResponse(response.Text);
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogError(ex, $"Error occurred while generating email for context {request.Context} with tone {request.Tone}. Attempt {i} of {maxAttempts}");
+                    if (i==maxAttempts)
+                    {
+                        throw; // rethrow the exception since it is the last attempt
+                    }
+                    await Task.Delay(2000); 
+                }
+            }
+            throw new InvalidOperationException("Email generation failed");
         }
     }
 }

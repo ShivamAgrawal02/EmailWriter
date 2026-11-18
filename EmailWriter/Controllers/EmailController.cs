@@ -20,6 +20,7 @@ namespace EmailWriter.Controllers
         public async Task<IActionResult> WriteEmail([FromBody] EmailRequest request)
         {
             _logger.LogInformation($"Email Generation Request Received. Tone {request.Tone} with Context: {request.Context}");
+           
             if (request == null || string.IsNullOrWhiteSpace(request.Context))
             {
                 _logger.LogWarning("Invalid email request received.");
