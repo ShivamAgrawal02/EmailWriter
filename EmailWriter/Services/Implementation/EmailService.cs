@@ -91,6 +91,7 @@ namespace EmailWriter.Services.Implementation
             {
                 Temperature = 0.3f,
                 TopK = 3,
+                MaxOutputTokens = 500
             };
             var maxAttempts = 2;
             for (int i = 1; i <= maxAttempts; i++)
