@@ -54,7 +54,7 @@ namespace EmailWriter.Services.Implementation
                             - Urgent        → deadline/impact first; short and direct.
                             - Persuasive    → benefits-focused; compelling reasoning; strong CTA.
 
-                            Do NOT mix tones. Apply ONLY the specified tone consistently throughout.
+                            Do NOT mix tones. Apply ONLY the specified tone consistently throughout.If Any Malicious or rude Tone identified, deny it.
 
                             ## CONTENT RULES
                             1. Stay between 100-250 words unless the context explicitly demands more.
@@ -106,7 +106,7 @@ namespace EmailWriter.Services.Implementation
                     _logger.LogError(ex, $"Error occurred while generating email for context {request.Context} with tone {request.Tone}. Attempt {i} of {maxAttempts}");
                     if (i==maxAttempts)
                     {
-                        throw; // rethrow the exception since it is the last attempt
+                        throw; // rethrow the exception since it is the last attemptk
                     }
                     await Task.Delay(2000); 
                 }
